@@ -1221,7 +1221,7 @@ router.post('/signup', (req, res) => {
 		}
 		else{
 			req.session.user = { username: username };
-			res.render('phone');
+			res.render('index');
 			}
 		}); 
 	}
@@ -1286,193 +1286,193 @@ router.post('/login', async (req, res) => {
 
 //--------------------------------------------FORGOT PASSWORD------------------------------------------------------------------------------------------
 
-const twilio = require('twilio');
+// const twilio = require('twilio');
 
-// Define Twilio credentials and verify service SID
-const accountSid = "ACecf0c667f0cfda12b85d28011461dfe7";
-const authToken = "88b04f3269ebe84b4c4e6e6f823a8980";
-const verifySid = "VA4ed805d28afaa72068afb67725de80b9";
-const client = twilio(accountSid, authToken);
+// // Define Twilio credentials and verify service SID
+// const accountSid = "ACecf0c667f0cfda12b85d28011461dfe7";
+// const authToken = "88b04f3269ebe84b4c4e6e6f823a8980";
+// const verifySid = "VA4ed805d28afaa72068afb67725de80b9";
+// const client = twilio(accountSid, authToken);
 
-// Route for initiating password recovery
-router.post('/forgot', function(req, res) {
-    // Retrieve phone number from req body
-    const phone = "+91"+req.body.phone;
+// // Route for initiating password recovery
+// router.post('/forgot', function(req, res) {
+//     // Retrieve phone number from req body
+//     const phone = "+91"+req.body.phone;
 
-    // Query database to check if phone number exists
-    database.query("SELECT * FROM login_demo WHERE phone = ?", [phone], (err, result) => {
-        if (err) {
-            console.error("Error querying database:", err);
-            return res.status(500).send("An error occurred. Please try again later.");
-        }
+//     // Query database to check if phone number exists
+//     database.query("SELECT * FROM login_demo WHERE phone = ?", [phone], (err, result) => {
+//         if (err) {
+//             console.error("Error querying database:", err);
+//             return res.status(500).send("An error occurred. Please try again later.");
+//         }
 
-        // If phone number exists, initiate OTP verification
-        if (result.length > 0) {
-            client.verify.services(verifySid)
-                .verifications.create({ to: phone, channel: "sms" })
-                .then((verification) => {
-                    console.log("OTP sent successfully:", verification);
-                    return res.render('otp', { phone: phone });
-                })
-                .catch((error) => {
-                    console.error("Error sending OTP:", error);
-                    return res.status(500).send("An error occurred. Please try again later.");
-                });
-        } else {
-            // If phone number doesn't exist, send error message
-            return res.send("Invalid Phone Number!!");
-        }
-    });
-});
-
-
-// -----------------------------------------------------Route for verifying OTP-----------------------------------------------------------------
-router.post('/verify-otp', function(req, res) {
-    const otp = req.body.otp;
-    const phone = req.body.phone;
-
-    // Use Twilio's Verify API to verify OTP
-    client.verify.services(verifySid)
-        .verificationChecks.create({ to: '+917899238398', code: otp })
-        .then((verification_check) => {
-            if (verification_check.status === 'approved') {
-                // If OTP is verified successfully, render admin dashboard
-                return res.render('newpassword');
-            } else {
-                // If OTP verification fails, send error message
-                return res.send("Invalid OTP. Please try again.");
-            }
-        })
-        .catch((error) => {
-            console.error("Error verifying OTP:", error);
-            return res.status(500).send("An error occurred. Please try again later.");
-        });
-});
+//         // If phone number exists, initiate OTP verification
+//         if (result.length > 0) {
+//             client.verify.services(verifySid)
+//                 .verifications.create({ to: phone, channel: "sms" })
+//                 .then((verification) => {
+//                     console.log("OTP sent successfully:", verification);
+//                     return res.render('otp', { phone: phone });
+//                 })
+//                 .catch((error) => {
+//                     console.error("Error sending OTP:", error);
+//                     return res.status(500).send("An error occurred. Please try again later.");
+//                 });
+//         } else {
+//             // If phone number doesn't exist, send error message
+//             return res.send("Invalid Phone Number!!");
+//         }
+//     });
+// });
 
 
-// //------------------------------------------------sign number----------------------------------------
-router.get("/phone", function(req, res, next){
+// // -----------------------------------------------------Route for verifying OTP-----------------------------------------------------------------
+// router.post('/verify-otp', function(req, res) {
+//     const otp = req.body.otp;
+//     const phone = req.body.phone;
 
-	res.render('phone');
-
-});
-// Route for initiating password recovery
-router.post('/phone', function(req, res) {
-    // Retrieve phone number from req body
-    const phone = "+91"+req.body.phone;
-
-    // Query database to check if phone number exists
-    database.query("SELECT * FROM login_demo WHERE phone = ?", [phone], (err, result) => {
-        if (err) {
-            console.error("Error querying database:", err);
-            return res.status(500).send("An error occurred. Please try again later.");
-        }
-
-        // If phone number exists, initiate OTP verification
-        if (result.length > 0) {
-            client.verify.services(verifySid)
-                .verifications.create({ to: phone, channel: "sms" })
-                .then((verification) => {
-                    console.log("OTP sent successfully:", verification);
-                    return res.render('sotp', { phone: phone });
-                })
-                .catch((error) => {
-                    console.error("Error sending OTP:", error);
-                    return res.status(500).send("An error occurred. Please try again later.");
-                });
-        } else {
-            // If phone number doesn't exist, send error message
-            return res.send("Invalid Phone Number!!");
-        }
-    });
-});
+//     // Use Twilio's Verify API to verify OTP
+//     client.verify.services(verifySid)
+//         .verificationChecks.create({ to: '+917899238398', code: otp })
+//         .then((verification_check) => {
+//             if (verification_check.status === 'approved') {
+//                 // If OTP is verified successfully, render admin dashboard
+//                 return res.render('newpassword');
+//             } else {
+//                 // If OTP verification fails, send error message
+//                 return res.send("Invalid OTP. Please try again.");
+//             }
+//         })
+//         .catch((error) => {
+//             console.error("Error verifying OTP:", error);
+//             return res.status(500).send("An error occurred. Please try again later.");
+//         });
+// });
 
 
-// //----------------------------------------------sign verify otp-------------------------------
-router.post('/sverify-otp', function(req, res) {
-    const otp = req.body.otp;
-    const phone =req.body.phone;
+// // //------------------------------------------------sign number----------------------------------------
+// router.get("/phone", function(req, res, next){
 
-    // Use Twilio's Verify API to verify OTP
-    client.verify.services(verifySid)
-        .verificationChecks.create({ to: "+917899238398", code: otp })
-        .then((verification_check) => {
-            if (verification_check.status === 'approved') {
-                // If OTP is verified successfully, render admin dashboard
-                return res.render('admindash');
-            } else {
-				database.query("DELETE FROM login_demo WHERE phone = ?", [phone], (err, result) => {
-					if (err) {
-						console.error("Error querying database:", err);
-					}
-					else{
-						res.render('signup');
-					}
-				})
-			}
+// 	res.render('phone');
 
-                // If OTP verification fails, send error message
+// });
+// // Route for initiating password recovery
+// router.post('/phone', function(req, res) {
+//     // Retrieve phone number from req body
+//     const phone = "+91"+req.body.phone;
+
+//     // Query database to check if phone number exists
+//     database.query("SELECT * FROM login_demo WHERE phone = ?", [phone], (err, result) => {
+//         if (err) {
+//             console.error("Error querying database:", err);
+//             return res.status(500).send("An error occurred. Please try again later.");
+//         }
+
+//         // If phone number exists, initiate OTP verification
+//         if (result.length > 0) {
+//             client.verify.services(verifySid)
+//                 .verifications.create({ to: phone, channel: "sms" })
+//                 .then((verification) => {
+//                     console.log("OTP sent successfully:", verification);
+//                     return res.render('sotp', { phone: phone });
+//                 })
+//                 .catch((error) => {
+//                     console.error("Error sending OTP:", error);
+//                     return res.status(500).send("An error occurred. Please try again later.");
+//                 });
+//         } else {
+//             // If phone number doesn't exist, send error message
+//             return res.send("Invalid Phone Number!!");
+//         }
+//     });
+// });
+
+
+// // //----------------------------------------------sign verify otp-------------------------------
+// router.post('/sverify-otp', function(req, res) {
+//     const otp = req.body.otp;
+//     const phone =req.body.phone;
+
+//     // Use Twilio's Verify API to verify OTP
+//     client.verify.services(verifySid)
+//         .verificationChecks.create({ to: "+917899238398", code: otp })
+//         .then((verification_check) => {
+//             if (verification_check.status === 'approved') {
+//                 // If OTP is verified successfully, render admin dashboard
+//                 return res.render('admindash');
+//             } else {
+// 				database.query("DELETE FROM login_demo WHERE phone = ?", [phone], (err, result) => {
+// 					if (err) {
+// 						console.error("Error querying database:", err);
+// 					}
+// 					else{
+// 						res.render('signup');
+// 					}
+// 				})
+// 			}
+
+//                 // If OTP verification fails, send error message
               
-            })
+//             })
         
-        .catch((error) => {
-            console.error("Error verifying OTP:", error);
-            return res.status(500).send("An error occurred. Please try again later.");
-        });
-});
+//         .catch((error) => {
+//             console.error("Error verifying OTP:", error);
+//             return res.status(500).send("An error occurred. Please try again later.");
+//         });
+// });
 
 
 
 
-// //--------------------------------------------setting new password----------------------------------------------------------
+// // //--------------------------------------------setting new password----------------------------------------------------------
 
-// Route to render the set password form
-router.get('/newpassword', (req, res) => {
-    res.render('newpassword'); // Assuming you're using a templating engine like EJS
-});
+// // Route to render the set password form
+// router.get('/newpassword', (req, res) => {
+//     res.render('newpassword'); // Assuming you're using a templating engine like EJS
+// });
 
-// Route to handle form submission and reset password
-router.post('/reset-password', (req, res) => {
+// // Route to handle form submission and reset password
+// router.post('/reset-password', (req, res) => {
 
-	const phone = "+91"+req.body.phone;
-    const newPassword = req.body.password;
-    const confirmPassword = req.body.confirm_password;
+// 	const phone = "+91"+req.body.phone;
+//     const newPassword = req.body.password;
+//     const confirmPassword = req.body.confirm_password;
 
 
-	const crypto = require('crypto');
-	const ENC= 'bf3c199c2470cb477d907b1e0917c17b';
-	const IV = "5183666c72eec9e4";
-	const ALGO = "aes-256-cbc"
+// 	const crypto = require('crypto');
+// 	const ENC= 'bf3c199c2470cb477d907b1e0917c17b';
+// 	const IV = "5183666c72eec9e4";
+// 	const ALGO = "aes-256-cbc"
 	
-	const encrypt = ((text) => 
-	{
-	let cipher = crypto.createCipheriv(ALGO, ENC, IV);
-	let encrypted = cipher.update(text, 'utf8', 'base64');
-	encrypted += cipher.final('base64');
-	return encrypted;
-	});
+// 	const encrypt = ((text) => 
+// 	{
+// 	let cipher = crypto.createCipheriv(ALGO, ENC, IV);
+// 	let encrypted = cipher.update(text, 'utf8', 'base64');
+// 	encrypted += cipher.final('base64');
+// 	return encrypted;
+// 	});
 	
 	
 
 	
-	const encrypted_key = encrypt(newPassword);
-    // Check if the passwords match
-    if (newPassword !== confirmPassword) {
-        return res.send('Passwords do not match. Please try again.');
-    }
-	else {
-		database.query("UPDATE login_demo SET password = ? where phone = ?", [encrypted_key,phone], (err, result) => {
-			if (err){
-				res.json({ message: err });
-			}
-			else{
-				res.render('admindash');
-				}
-			}); 
+// 	const encrypted_key = encrypt(newPassword);
+//     // Check if the passwords match
+//     if (newPassword !== confirmPassword) {
+//         return res.send('Passwords do not match. Please try again.');
+//     }
+// 	else {
+// 		database.query("UPDATE login_demo SET password = ? where phone = ?", [encrypted_key,phone], (err, result) => {
+// 			if (err){
+// 				res.json({ message: err });
+// 			}
+// 			else{
+// 				res.render('admindash');
+// 				}
+// 			}); 
 
-	}
-console.log("new password:",newPassword)
-});
+// 	}
+// console.log("new password:",newPassword)
+// });
 
 
 
